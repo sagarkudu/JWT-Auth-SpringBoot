@@ -3,11 +3,12 @@ package com.sagar.jwt.controller;
 import com.sagar.jwt.helper.JwtUtil;
 import com.sagar.jwt.model.JwtRequest;
 import com.sagar.jwt.model.JwtResponse;
-import com.sagar.jwt.services.customUserDetailsService;
+import com.sagar.jwt.services.CustomUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +23,7 @@ public class JwtController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private customUserDetailsService customUserDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -36,6 +37,9 @@ public class JwtController {
         try {
             this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
         } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+            throw new Exception("Bad Credentials");
+        } catch (BadCredentialsException e){
             e.printStackTrace();
             throw new Exception("Bad Credentials");
         }
